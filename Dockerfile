@@ -52,6 +52,7 @@ RUN echo 'from flask import Flask, request, render_template, redirect, url_for' 
     echo '    iso_file = request.form["iso_file"]' >> app.py && \
     echo '    iso_path = os.path.join(app.config["UPLOAD_FOLDER"], iso_file)' >> app.py && \
     echo '    subprocess.Popen(["qemu-system-x86_64", "-cdrom", iso_path, "-vnc", ":1"])' >> app.py && \
+    echo '    subprocess.Popen(["websockify", "5901", "localhost:5900"])' >> app.py && \
     echo '    return redirect(url_for("vnc_viewer"))' >> app.py && \
     echo '' >> app.py && \
     echo '@app.route("/create_drive", methods=["POST"])' >> app.py && \
@@ -123,8 +124,8 @@ RUN echo '<!doctype html>' > templates/vnc_viewer.html && \
     echo '</body>' >> templates/vnc_viewer.html && \
     echo '</html>' >> templates/vnc_viewer.html
 
-# Expose the port the app runs on
-EXPOSE 5000
+# Expose the ports the app and VNC server run on
+EXPOSE 5000 5901
 
 # Run the Flask application
 CMD ["python3", "app.py"]
